@@ -1,0 +1,19 @@
+name = "ChaoticMessages"
+uuid = "aa478434-e6c4-48af-b61f-423d2e2da8e3"
+authors = ["ph-kev"]
+version = "1.0.0-DEV"
+
+[deps]
+DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
+WAV = "8149f6b0-98f6-5db9-b78f-408fbbb8ef88"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
