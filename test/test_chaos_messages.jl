@@ -142,4 +142,17 @@ using DifferentialEquations
         res = diff.(time_arr) .< 0.1
         @test ones(size(time_arr)) == res
     end
+
+    @testset "binary_to_bmessage" begin
+        @test_throws ErrorException("Only take binary strings of 0's and 1's") binary_to_bmessage("2")
+        @test_throws ErrorException("Only take binary strings of 0's and 1's") binary_to_bmessage("12")
+        @test_throws ErrorException("Only take binary strings of 0's and 1's") binary_to_bmessage("20")
+        bmessage = binary_to_bmessage("10")
+        @test bmessage(-1.0) == 4.0 
+        @test bmessage(20.0) == 4.0 
+        @test bmessage(0.0) == 4.4
+        @test bmessage(1.0) == 4.4
+        @test bmessage(2.0) == 4.0
+        @test bmessage(3.0) == 4.0
+    end 
 end

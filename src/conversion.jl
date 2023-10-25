@@ -84,9 +84,11 @@ function binary_to_bmessage(
     b_one::Float64 = 4.4,
 )
     # Check if the string is binary 
-    if !(occursin("0", s) || occursin("1", s))
-        error("Only take binary strings of 0's and 1's")
-    end
+    for char in s
+        if ((char != '0') && (char != '1'))
+            error("Only take binary strings of 0's and 1's")
+        end 
+    end 
 
     # Parse string and put them into an array 
     binary_arr = [parse.(Float64, string(c)) for c in s]
