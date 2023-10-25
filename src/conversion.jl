@@ -74,7 +74,7 @@ end
 - `b_one::Float64 = 4.4` : value of the function when the binary digit is one 
 
 Return a function that map the time ``t`` to `floor(t/time_length)`th letter 
-in the string. The binary digits in the string is counted starting with 0. If ``t < 0`` or 
+in the string. The binary digits in the string is counted starting with 0. If `t < 0` or 
 `t >= time_length * length(binary_arr)`, then it is `b_zero`.
 """
 function binary_to_bmessage(
