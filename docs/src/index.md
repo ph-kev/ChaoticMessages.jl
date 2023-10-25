@@ -12,7 +12,7 @@ This package simulates the chaotic dynamical systems using `DifferentialEquation
 ```julia 
 julia> ]
 
-(@v1.8) pkg> add https://github.com/ph-kev/ChaosMessages.jl
+(@v1.8) pkg> add https://github.com/ph-kev/ChaoticMessages.jl
 ```
 
 # References 
