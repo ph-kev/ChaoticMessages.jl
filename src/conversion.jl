@@ -67,11 +67,11 @@ end
 """
     binary_to_bmessage(s::String; time_length = 2.0, b_zero = 4.0, b_one = 4.4)
 
-    # Arguments
-    - `s::String` : binary string of 0's and 1's  
-    - `time_length::Float64 = 2.0` : time between each binary digit 
-    - `b_zero::Float64 = 4.0` : value of the function when the binary digit is zero 
-    - `b_one::Float64 = 4.4` : value of the function when the binary digit is one 
+# Arguments
+- `s::String` : binary string of 0's and 1's  
+- `time_length::Float64 = 2.0` : time between each binary digit 
+- `b_zero::Float64 = 4.0` : value of the function when the binary digit is zero 
+- `b_one::Float64 = 4.4` : value of the function when the binary digit is one 
 
 Return a function that map the time ``t`` to `floor(t/time_length)`th letter 
 in the string. The binary digits in the string is counted starting with 0. If ``t < 0`` or 
