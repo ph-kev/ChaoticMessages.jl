@@ -31,7 +31,7 @@ no_message = create_secret_message(u0, p, tspan, (t) -> 0.0)
 
 # Plotting unscaled secret message 
 time_arr = range(tspan..., length = 100000)
-plot(time_arr, unscaled_secret_message, xlabel=L"t", ylabel=L"x(t)", label = "Secret message embedded", color = "lightblue")
+plot(time_arr, unscaled_secret_message, xaxis=L"t", yaxis=L"x(t)", label = "Secret message embedded", color = "lightblue")
 plot!(time_arr, no_message, label = "No message embedded", color = "darkorange")
 ```
 
@@ -76,10 +76,10 @@ To examine its effectiveness, we look at the error between `unencrypted_message`
 ```@example sending
 # Plot error between original sound file and decrypted sound file 
 abs_error = error_set_up(unencrypted_message, decrypted_message)
-error_plot = plot(abs_error, tspan..., legend = false, xlabel=L"t", ylabel=L"E(t)", color = "red", linewidth=0.5)
+error_plot = plot(abs_error, tspan..., legend = false, xaxis=L"t", yaxis=L"E(t)", color = "red", linewidth=0.5)
 
 # Plot unencrypted message and encrypted message 
-sound_plot = plot(unencrypted_message,tspan...,label="Original", xlabel=L"t", ylabel="Amplitude", color = "blue", linewidth=0.1)
+sound_plot = plot(unencrypted_message,tspan...,label="Original", xaxis=L"t", yaxis="Amplitude", color = "blue", linewidth=0.1)
 plot!(sound_plot, decrypted_message,tspan...,label="Recovered", linewidth=1.5, linealpha=0.3, color = "green")
 combined_plot = plot(sound_plot, error_plot, dpi = 900)
 
@@ -116,7 +116,7 @@ for s in [2.0, 1.0, 0.5, 0.1]
     # Plot the error 
     abs_error = error_set_up(message_unencrypted, decrypted_message)
     
-    plot!(abs_error, tspan..., xlabel=L"t", ylabel=L"E(t)", labels = L"\sigma = " * string(s), palette = :seaborn_colorblind, linewidth = 0.5, dpi = 600)
+    plot!(abs_error, tspan..., xaxis=L"t", yaxis=L"E(t)", labels = L"\sigma = " * string(s), palette = :seaborn_colorblind, linewidth = 0.5, dpi = 600)
   end 
 
 error_plot

@@ -48,7 +48,7 @@ secret_message = create_secret_message(
     binary = true,
 )
 
-plot(secret_message, tspan..., xticks = 0:2:12, legend = false, xlabel=L"t", ylabel="Transmitter",linecolor="black")
+plot(secret_message, tspan..., xticks = 0:2:12, legend = false, xaxis=L"t", yaxis="Transmitter",linecolor="black")
 ```
 
 To decrypt the secret message, we use the receiver's dynamical system which is 
@@ -73,7 +73,7 @@ error_squared = decrypt_secret_message(
     binary = true
 )
 
-p = plot(error_squared, tspan..., xticks = 0:2:12, xlabel=L"t", ylabel="Error squared",linecolor="black")
+p = plot(error_squared, tspan..., xticks = 0:2:12, xaxis=L"t", yaxis="Error squared",linecolor="black")
 
 for i in [0, 4, 8]
     vspan!(p, [i, i + 2], linecolor = :red, fillcolor = :red, fillalpha = 0.2, legend = false)
