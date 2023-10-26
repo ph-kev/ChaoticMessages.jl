@@ -11,7 +11,6 @@ using Distributions
 
 # Arguments
 - `message::String` : filepath to the wav file to convert to samples 
-- `sampling_rate` : sampling rate of the resulting file 
 - `add_noise::Bool` : if true, add Gaussian noise of standard deviation `std` and none otherwise 
 - `std::Float64` : standard deviation of Gaussian noise if `add_noise` is `true`
 

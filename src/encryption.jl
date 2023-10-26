@@ -47,7 +47,16 @@ function lorenz_transmitter_binary!(du, u, p, t)
 end
 
 """
-    create_secret_message(u0, p, tspan, message_unencrypted, scale = 1e-5)
+    create_secret_message(
+        u0::Vector{Float64},
+        p::Vector{Float64},
+        tspan::Union{Tuple{Float64,Float64},Vector{Float64}},
+        message_unencrypted;
+        binary::Bool = false,
+        scale::Float64 = 1e-5,
+        abstol::Float64 = 1e-11,
+        reltol::Float64 = 1e-11,
+    )
 
 # Arguments
 - `u0::Vector{Float64}`: initial condition of the Lorenz system 
@@ -129,7 +138,16 @@ function lorenz_receiver!(secret_message)
 end
 
 """
-    decrypt_secret_message(u0, p, tspan, secret_message)
+    decrypt_secret_message(
+        u0::Vector{Float64},
+        p::Vector{Float64},
+        tspan::Union{Tuple{Float64,Float64},Vector{Float64}},
+        secret_message;
+        binary::Bool = false,
+        scale::Float64 = 1e5,
+        abstol::Float64 = 1e-11,
+        reltol::Float64 = 1e-11,
+    )
 
 # Arguments
 - `u0::Vector{Float64}`: initial condition of the variation of the Lorenz system 
