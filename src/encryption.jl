@@ -69,7 +69,7 @@ end
 - `reltol::Float64 = 1e-11` : relative tolerance for the ODE solver 
 
 Encrpyt the message using a paramterized version of the Lorenz system 
-(see lorenz_transmitter! and lorenz_transmitter_binary!).  
+(see `lorenz_transmitter!` and `lorenz_transmitter_binary!`).  
 """
 function create_secret_message(
     u0::Vector{Float64},
@@ -159,7 +159,7 @@ end
 - `abstol::Float64 = 1e-11` : absolute tolerance for the ODE solver 
 - `reltol::Float64 = 1e-11` : relative tolerance for the ODE solver 
 
-Decrypt the message using a paramterized version of the Lorenz system (lorenz_receiver!).  
+Decrypt the message using a paramterized version of the Lorenz system (`lorenz_receiver!`).  
 """
 function decrypt_secret_message(
     u0::Vector{Float64},
