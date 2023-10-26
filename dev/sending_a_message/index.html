@@ -9,6 +9,7 @@ using Plots
 using DifferentialEquations
 using LaTeXStrings
 using Random
+using Measures
 
 u0 = [2.2,1.3,2.0] # initial condition
 p = [16.0, 4.0, 45.6] # parameters of the dynamical system
@@ -21,8 +22,8 @@ no_message = create_secret_message(u0, p, tspan, (t) -&gt; 0.0)
 
 # Plotting unscaled secret message
 time_arr = range(tspan..., length = 100000)
-plot(time_arr, unscaled_secret_message, xaxis=L&quot;t&quot;, yaxis=L&quot;x(t)&quot;, label = &quot;Secret message embedded&quot;, color = &quot;lightblue&quot;)
-plot!(time_arr, no_message, label = &quot;No message embedded&quot;, color = &quot;darkorange&quot;)</code></pre><img src="3021baaf.svg" alt="Example block output"/><p>The first step is to create an encrypted message <span>$\widetilde{m}(t) = x_T (t) + m(t)$</span> where the magnitude of <span>$m(t)$</span> is much smaller than the magnitude of <span>$x_T(t)$</span>. This encrypts the message <span>$m(t)$</span> because <span>$x_T(t)$</span> serve as a mask to hide the message <span>$m(t)$</span>. Note that <span>$m(t)$</span> can be made as small as we like by multiplying by <span>$0 &lt; \varepsilon &lt; 1$</span>. The receiver can multiply by <span>$\frac{1}{\varepsilon}$</span> to get <span>$m(t)$</span> back when the receiver recovers the scaled version of <span>$m(t)$</span>. The variable <span>$\varepsilon$</span> is the keyword argument <code>scale</code> in <code>create_secret_message</code>. </p><pre><code class="language-julia hljs">### Transmitter ###
+plot(time_arr, unscaled_secret_message, xaxis=L&quot;t&quot;, yaxis=L&quot;x(t)&quot;, label = &quot;Secret message embedded&quot;, color = &quot;lightblue&quot;, left_margin=10mm, bottom_margin=10mm)
+plot!(time_arr, no_message, label = &quot;No message embedded&quot;, color = &quot;darkorange&quot;)</code></pre><img src="933ab56d.svg" alt="Example block output"/><p>The first step is to create an encrypted message <span>$\widetilde{m}(t) = x_T (t) + m(t)$</span> where the magnitude of <span>$m(t)$</span> is much smaller than the magnitude of <span>$x_T(t)$</span>. This encrypts the message <span>$m(t)$</span> because <span>$x_T(t)$</span> serve as a mask to hide the message <span>$m(t)$</span>. Note that <span>$m(t)$</span> can be made as small as we like by multiplying by <span>$0 &lt; \varepsilon &lt; 1$</span>. The receiver can multiply by <span>$\frac{1}{\varepsilon}$</span> to get <span>$m(t)$</span> back when the receiver recovers the scaled version of <span>$m(t)$</span>. The variable <span>$\varepsilon$</span> is the keyword argument <code>scale</code> in <code>create_secret_message</code>. </p><pre><code class="language-julia hljs">### Transmitter ###
 # Create secret message
 unencrypted_message, num_samples, sampling_rate = convert_message_to_samples(&quot;../audio/taunt.wav&quot;)
 secret_message = create_secret_message(u0, p, tspan, unencrypted_message)
@@ -45,15 +46,15 @@ abs_error = error_set_up(unencrypted_message, decrypted_message)
 error_plot = plot(abs_error, tspan..., legend = false, xaxis=L&quot;t&quot;, yaxis=L&quot;E(t)&quot;, color = &quot;red&quot;, linewidth=0.5)
 
 # Plot unencrypted message and encrypted message
-sound_plot = plot(unencrypted_message,tspan...,label=&quot;Original&quot;, xaxis=L&quot;t&quot;, yaxis=&quot;Amplitude&quot;, color = &quot;blue&quot;, linewidth=0.1)
+sound_plot = plot(unencrypted_message,tspan...,label=&quot;Original&quot;, xaxis=L&quot;t&quot;, yaxis=&quot;Amplitude&quot;, color = &quot;blue&quot;, linewidth=0.1, left_margin=10mm, bottom_margin=10mm)
 plot!(sound_plot, decrypted_message,tspan...,label=&quot;Recovered&quot;, linewidth=1.5, linealpha=0.3, color = &quot;green&quot;)
 combined_plot = plot(sound_plot, error_plot, dpi = 900)
 
-combined_plot</code></pre><img src="48c8bc3e.svg" alt="Example block output"/><p>Noise can be added to the message to test whether this form of encryption is robust to noise or not. We tested it for <span>$\sigma = 0.1, 0.5, 1.0, 2.0$</span>. The message is still recovered, but is masked with static noise. For a large <span>$\sigma$</span>, the message cannot be heard because of the static noise. Hence, this is not robust to noise. </p><pre><code class="language-julia hljs">Random.seed!(42424242) # set seed
+combined_plot</code></pre><img src="f8a4237f.svg" alt="Example block output"/><p>Noise can be added to the message to test whether this form of encryption is robust to noise or not. We tested it for <span>$\sigma = 0.1, 0.5, 1.0, 2.0$</span>. The message is still recovered, but is masked with static noise. For a large <span>$\sigma$</span>, the message cannot be heard because of the static noise. Hence, this is not robust to noise. </p><pre><code class="language-julia hljs">Random.seed!(42424242) # set seed
 
 message_unencrypted, _, _ = convert_message_to_samples(&quot;../audio/taunt.wav&quot;)
 
-error_plot = plot()
+error_plot = plot(left_margin=10mm, bottom_margin=10mm)
 # plot error for various levels of standard deviation
 for s in [2.0, 1.0, 0.5, 0.1]
     # Create secret message
@@ -79,4 +80,4 @@ for s in [2.0, 1.0, 0.5, 0.1]
     plot!(abs_error, tspan..., xaxis=L&quot;t&quot;, yaxis=L&quot;E(t)&quot;, labels = L&quot;\sigma = &quot; * string(s), palette = :seaborn_colorblind, linewidth = 0.5, dpi = 600)
   end
 
-error_plot</code></pre><img src="f8b5e062.svg" alt="Example block output"/><p>[1] Kevin M. Cuomo and Alan V. Oppenheim. “Circuit implementation of synchronized chaos with applications to communications”. In: Phys. Rev. Lett. 71 (1 July 1993), pp. 65–68. doi:10.1103/PhysRevLett.71.65. url: https://link.aps.org/doi/10.1103/PhysRevLett.71.65</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../convergence/">« Convergence</a><a class="docs-footer-nextpage" href="../sending_a_binary_message/">Sending a secret binary message »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Thursday 26 October 2023 07:20">Thursday 26 October 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+error_plot</code></pre><img src="0667454a.svg" alt="Example block output"/><p>[1] Kevin M. Cuomo and Alan V. Oppenheim. “Circuit implementation of synchronized chaos with applications to communications”. In: Phys. Rev. Lett. 71 (1 July 1993), pp. 65–68. doi:10.1103/PhysRevLett.71.65. url: https://link.aps.org/doi/10.1103/PhysRevLett.71.65</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../convergence/">« Convergence</a><a class="docs-footer-nextpage" href="../sending_a_binary_message/">Sending a secret binary message »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Thursday 26 October 2023 14:20">Thursday 26 October 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
