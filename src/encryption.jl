@@ -59,7 +59,8 @@ end
 - `abstol::Float64 = 1e-11` : absolute tolerance for the ODE solver 
 - `reltol::Float64 = 1e-11` : relative tolerance for the ODE solver 
 
-Encrpyt the message using the Lorenz system (see lorenz_transmitter!).  
+Encrpyt the message using a paramterized version of the Lorenz system 
+(see lorenz_transmitter! and lorenz_transmitter_binary!).  
 """
 function create_secret_message(
     u0::Vector{Float64},
@@ -72,9 +73,12 @@ function create_secret_message(
     reltol::Float64 = 1e-11,
 )
     if !binary
+        # Solve chaotic system 
         prob = ODEProblem(lorenz_transmitter!, u0, tspan, p)
         sol_transmitter =
             solve(prob, AutoTsit5(Rodas4P()), abstol = abstol, reltol = reltol)
+
+        # Make a function that return the x-component of the solution 
         function secret_message1(t)
             hidden(t) = scale * message_unencrypted(t)
             secret_at_time_t = sol_transmitter(t, idxs = 1) + hidden(t)
@@ -82,11 +86,15 @@ function create_secret_message(
         end
         return secret_message1
     else
-        (σ, _, r) = p
-        p1 = (σ, message_unencrypted, r)
+        (σ, _, r) = p # ignore the second parameter 
+        p1 = (σ, message_unencrypted, r) # substitute second paramter for the message 
+
+        # Solve chaotic system 
         prob = ODEProblem(lorenz_transmitter_binary!, u0, tspan, p1)
         sol_transmitter =
             solve(prob, AutoTsit5(Rodas4P()), abstol = abstol, reltol = reltol)
+
+        # Make a function that return the x-component of the solution 
         function secret_message2(t)
             secret_at_time_t = sol_transmitter(t, idxs = 1)
             return secret_at_time_t
@@ -133,7 +141,7 @@ end
 - `abstol::Float64 = 1e-11` : absolute tolerance for the ODE solver 
 - `reltol::Float64 = 1e-11` : relative tolerance for the ODE solver 
 
-Decrypt the message using the Lorenz system (lorenz_receiver!).  
+Decrypt the message using a paramterized version of the Lorenz system (lorenz_receiver!).  
 """
 function decrypt_secret_message(
     u0::Vector{Float64},
@@ -144,10 +152,14 @@ function decrypt_secret_message(
     scale::Float64 = 1e5,
     abstol::Float64 = 1e-11,
     reltol::Float64 = 1e-11,
-)
+)   
+    # Solve chaotic system 
     lorenz_receiver_with_message! = lorenz_receiver!(secret_message)
     prob_R = ODEProblem(lorenz_receiver_with_message!, u0, tspan, p)
     sol_receiver = solve(prob_R, AutoTsit5(Rodas4P()), abstol = abstol, reltol = reltol)
+
+    # Make a function that return the error and scale it if the message is not binary and 
+    # square it if the message is binary 
     if !binary
         function decrypted_message1(t)
             return (secret_message(t) - sol_receiver(t, idxs = 1)) * scale
