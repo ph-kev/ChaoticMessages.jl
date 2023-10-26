@@ -19,6 +19,7 @@ using Plots
 using DifferentialEquations
 using LaTeXStrings
 using Random
+using Measures 
 
 u0 = [2.2,1.3,2.0] # initial condition
 p = [16.0, 4.0, 45.6] # parameters of the dynamical system 
@@ -31,7 +32,7 @@ no_message = create_secret_message(u0, p, tspan, (t) -> 0.0)
 
 # Plotting unscaled secret message 
 time_arr = range(tspan..., length = 100000)
-plot(time_arr, unscaled_secret_message, xaxis=L"t", yaxis=L"x(t)", label = "Secret message embedded", color = "lightblue")
+plot(time_arr, unscaled_secret_message, xaxis=L"t", yaxis=L"x(t)", label = "Secret message embedded", color = "lightblue", left_margin=10mm, bottom_margin=10mm)
 plot!(time_arr, no_message, label = "No message embedded", color = "darkorange")
 ```
 
@@ -79,7 +80,7 @@ abs_error = error_set_up(unencrypted_message, decrypted_message)
 error_plot = plot(abs_error, tspan..., legend = false, xaxis=L"t", yaxis=L"E(t)", color = "red", linewidth=0.5)
 
 # Plot unencrypted message and encrypted message 
-sound_plot = plot(unencrypted_message,tspan...,label="Original", xaxis=L"t", yaxis="Amplitude", color = "blue", linewidth=0.1)
+sound_plot = plot(unencrypted_message,tspan...,label="Original", xaxis=L"t", yaxis="Amplitude", color = "blue", linewidth=0.1, left_margin=10mm, bottom_margin=10mm)
 plot!(sound_plot, decrypted_message,tspan...,label="Recovered", linewidth=1.5, linealpha=0.3, color = "green")
 combined_plot = plot(sound_plot, error_plot, dpi = 900)
 
@@ -93,7 +94,7 @@ Random.seed!(42424242) # set seed
 
 message_unencrypted, _, _ = convert_message_to_samples("../audio/taunt.wav")
 
-error_plot = plot()
+error_plot = plot(left_margin=10mm, bottom_margin=10mm)
 # plot error for various levels of standard deviation 
 for s in [2.0, 1.0, 0.5, 0.1] 
     # Create secret message 

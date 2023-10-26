@@ -7,6 +7,7 @@ using ChaoticMessages
 using Plots
 using DifferentialEquations
 using LaTeXStrings
+using Measures
 ```
 
 We first encode a binary string into a function of time. If the binary digit is $0$, then the result is `b_zero = 4.0` and if the binary digit is $1$, then the result is `b_one = 4.4`. Each digit is spaced by a time interval of $t=2$. Anything else that do not correspond to any of the position of the binary string is mapped to the value of `b_zero`. 
@@ -48,7 +49,7 @@ secret_message = create_secret_message(
     binary = true,
 )
 
-plot(secret_message, tspan..., xticks = 0:2:12, legend = false, xaxis=L"t", yaxis="Transmitter",linecolor="black")
+plot(secret_message, tspan..., xticks = 0:2:12, legend = false, xaxis=L"t", yaxis="Transmitter",linecolor="black", left_margin=10mm, bottom_margin=10mm)
 ```
 
 To decrypt the secret message, we use the receiver's dynamical system which is 
@@ -73,7 +74,7 @@ error_squared = decrypt_secret_message(
     binary = true
 )
 
-p = plot(error_squared, tspan..., xticks = 0:2:12, xaxis=L"t", yaxis="Error squared",linecolor="black")
+p = plot(error_squared, tspan..., xticks = 0:2:12, xaxis=L"t", yaxis="Error squared",linecolor="black", left_margin=10mm, bottom_margin=10mm)
 
 for i in [0, 4, 8]
     vspan!(p, [i, i + 2], linecolor = :red, fillcolor = :red, fillalpha = 0.2, legend = false)

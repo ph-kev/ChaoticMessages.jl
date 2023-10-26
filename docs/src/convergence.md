@@ -31,6 +31,7 @@ using ChaoticMessages
 using Plots
 using DifferentialEquations
 using LaTeXStrings
+using Measures 
 
 u0 = [2.2,1.3,2.0] # initial conditions 
 p = [16.0;4.0;45.6] # parameters 
@@ -41,7 +42,7 @@ prob_T = ODEProblem(lorenz_transmitter!, u0, tspan, p)
 sol_transmitter = solve(prob_T, AutoTsit5(Rodas4P()), abstol = 1e-11, reltol = 1e-11)
 
 # Plot only the x-component of the solution for transmitter's dynamical system 
-transmitter_plot = plot(sol_transmitter, idxs = (0, 1), legend = false, xaxis=L"t", yaxis="Transmitter",linecolor="black")
+transmitter_plot = plot(sol_transmitter, idxs = (0, 1), legend = false, xaxis=L"t", yaxis="Transmitter",linecolor="black", left_margin=10mm, bottom_margin=10mm)
 ```
 
 Next, we find the solution to the receiver's dynamical system with the same parameters ``\sigma = 16``, ``r=45.6``, and ``b=4`` as before, but with different initial condition ``[10.2,7.3,6.0]``. Also, notice that in the definition of the receiver's system, we are using ``x_T`` which is the $x$-coordinate of the transmitter's dynamical system. Hence, the receiver's dynamical system have some information about the transmitter's dynamical system. 
@@ -59,7 +60,7 @@ prob_R = ODEProblem(receiver!,u0,tspan,p) # reusing the same parameters
 sol_receiver = solve(prob_R, AutoTsit5(Rodas4P()), abstol = 1e-11, reltol = 1e-11)
 
 # Plot only the x-component of the solution for receiver's dynamical system 
-receiver_plot = plot(sol_receiver, idxs = (0, 1), legend = false, xaxis=L"t", yaxis="Receiver",linecolor="black")
+receiver_plot = plot(sol_receiver, idxs = (0, 1), legend = false, xaxis=L"t", yaxis="Receiver", linecolor="black", left_margin=10mm, bottom_margin=10mm)
 ```
 
 Lastly, we plot the absolute error between the $x$-component of the receiver's dynamical system and the transmitter's dynamical system. We see that the error converge to zero which means the pair of dynamical system synchronize despite starting at different initial conditions. Also, it has been shown that the error converge to zero in $O(t^2)$ time. The idea behind sending secret messages using chaotic dynamical systems is to encode a message in $x_T$ and having the receiver's dynamical system reproduce the message by its synchronization! 
@@ -75,5 +76,5 @@ error_plot = plot(abs_error, tspan..., legend = false, xaxis=L"t", yaxis=L"E(t)"
 x_coord_plot = plot(x_at_time_t_transmitter, tspan...,label="Transmitter",xaxis=L"t",yaxis=L"x(t)")
 plot!(x_at_time_t_receiver, tspan...,label="Receiver")
 
-combined_plot = plot(x_coord_plot, error_plot, dpi=600)
+combined_plot = plot(x_coord_plot, error_plot, dpi=600, left_margin=10mm, bottom_margin=10mm)
 ```
