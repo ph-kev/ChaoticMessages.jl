@@ -13,7 +13,7 @@ using DifferentialEquations
         y = sin.(2pi * freq * time_arr) * 0.1
         wavwrite(y, "test.wav", Fs = sampling_rate1)
 
-        # Create functions and test if they are approximately equal 
+        # Create functions for testing if they are approximately equal 
         samples, num_samples, sampling_rate2 = convert_message_to_samples("test.wav")
         wave(t) = sin.(2pi * freq * t) * 0.1
 
@@ -26,16 +26,21 @@ using DifferentialEquations
         end
     end
 
-    @testset "convert_message_to_samples with noise" begin
+    @testset "convert_message_to_samples with noise (probabilistic)" begin
         # Create the wave y = 1 and save it as "test1.wav"
         sampling_rate = 1e6
         time_arr = 0.0:1/sampling_rate:prevfloat(1.0)
         y = ones(size(time_arr))
         wavwrite(y, "test1.wav", Fs = sampling_rate)
 
+        # Parameters for noise 
         std = 4.2
         mean = 1.0
+
+        # Create a noisy message 
         wave, _, _ = convert_message_to_samples("test1.wav", add_noise = true, std = std)
+
+        # Compute mean and standard deviation and test if they are approximately the same 
         arr = wave.(time_arr)
         est_mean = Statistics.mean(arr)
         est_std = Statistics.std(arr)
@@ -44,6 +49,7 @@ using DifferentialEquations
     end
 
     @testset "convert_samples_to_message" begin
+        # Create a waveform and save it as "test3.wav" 
         sampling_rate = 8e3
         time_arr = 0.0:1/sampling_rate:prevfloat(1.0)
         freq = 1e3
@@ -144,9 +150,12 @@ using DifferentialEquations
     end
 
     @testset "binary_to_bmessage" begin
+        # Testing error-checking 
         @test_throws ErrorException("Only take binary strings of 0's and 1's") binary_to_bmessage("2")
         @test_throws ErrorException("Only take binary strings of 0's and 1's") binary_to_bmessage("12")
         @test_throws ErrorException("Only take binary strings of 0's and 1's") binary_to_bmessage("20")
+
+        # Create message and test it for various value of t 
         bmessage = binary_to_bmessage("10")
         @test bmessage(-1.0) == 4.0 
         @test bmessage(20.0) == 4.0 
