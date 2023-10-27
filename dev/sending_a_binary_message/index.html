@@ -3,7 +3,7 @@
 using Plots
 using DifferentialEquations
 using LaTeXStrings
-using Measures</code></pre><p>We first encode a binary string into a function of time. If the binary digit is <span>$0$</span>, then the result is <code>b_zero = 4.0</code> and if the binary digit is <span>$1$</span>, then the result is <code>b_one = 4.4</code>. Each digit is spaced by a time interval of <span>$t=2$</span>. Anything else that do not correspond to any of the position of the binary string is mapped to the value of <code>b_zero</code>. </p><pre><code class="language-julia hljs">message_unencrypted = binary_to_bmessage(&quot;101010&quot;; )
+using Measures</code></pre><p>We first encode a binary string as a function of time. If the binary digit is <span>$0$</span>, then the result is <code>b_zero = 4.0</code> and if the binary digit is <span>$1$</span>, then the result is <code>b_one = 4.4</code>. Each digit is spaced by a time interval of <span>$t=2.0$</span>. Anything else that do not correspond to any of the position of the binary string is mapped to the value of <code>b_zero</code>. </p><pre><code class="language-julia hljs">message_unencrypted = binary_to_bmessage(&quot;101010&quot;; )
 println(message_unencrypted(0.0)) # first position of the string
 println(message_unencrypted(2.0)) # second position of the string
 println(message_unencrypted(4.0)) # third position of the string
@@ -17,7 +17,7 @@ println(message_unencrypted(-1.0)) # correspond to no position of the string</co
 4.0</code></pre><p>We now use this in the transmitter&#39;s chaotic system which is given by </p><p class="math-container">\[\begin{align*}
 \dot{x_T} &amp;= \sigma (y_T - x_T), \\ 
 \dot{y_T} &amp;= rx_T - y_T - 20 x_T z_T, \\ 
-\dot{z_T} &amp;= 5 x_T y_T - b(t)z_T,
+\dot{z_T} &amp;= 5 x_T y_T - b(t)z_T.
 \end{align*}\]</p><p>Notice that <span>$b(t)$</span> is a function of time now. This is the parameter modulation. </p><p>The x-component of the trajectory is plotted, and we see that the message is encrypted.</p><pre><code class="language-julia hljs">u0 = [2.2, 1.3, 2.0] # initial conditions
 p = [16.0, 4.0, 45.6] # parameters (second value is ignored for now)
 tspan = (0.0, 12.0) # time span
@@ -30,12 +30,13 @@ secret_message = create_secret_message(
     binary = true,
 )
 
-plot(secret_message, tspan..., xticks = 0:2:12, legend = false, xaxis=L&quot;t&quot;, yaxis=&quot;Transmitter&quot;,linecolor=&quot;black&quot;, left_margin=10mm, bottom_margin=10mm)</code></pre><img src="9aa2b3e3.svg" alt="Example block output"/><p>To decrypt the secret message, we use the receiver&#39;s dynamical system which is </p><p class="math-container">\[\begin{align*}
+# Plot x-component of the solution to the transmitter&#39;s dynamical system
+plot(secret_message, tspan..., xticks = 0:2:12, legend = false, xaxis=L&quot;t&quot;, yaxis=&quot;Transmitter&quot;,linecolor=&quot;black&quot;, left_margin=10mm, bottom_margin=10mm)</code></pre><img src="9c934784.svg" alt="Example block output"/><p>To decrypt the secret message, we use the receiver&#39;s dynamical system which is </p><p class="math-container">\[\begin{align*}
 \dot{x_R} &amp;= \sigma (y_R - x_R), \\ 
 \dot{y_R} &amp;= rx_T - y_R - 20 x_T z_R, \\ 
-\dot{z_R} &amp;= 5 x_T y_R - bz_R,
-\end{align*}\]</p><p>If <span>$b=4.0$</span>, then synchronization occurs and if <span>$b=4.4$</span>, then synchronization does not occur. The result of <code>decrypt_secret_message</code> is the error squared between the x-component of the transmitter&#39;s solution and the x-component of the receiver&#39;s solution. If the error is close to zero, then the binary digit must be <span>$0$</span> and otherwise, the binary digit is <span>$1$</span>. </p><pre><code class="language-julia hljs"># result is the difference between the x_T and x_R squared
-error_squared = decrypt_secret_message(
+\dot{z_R} &amp;= 5 x_T y_R - bz_R.
+\end{align*}\]</p><p>If <span>$b=4.0$</span>, then the parameters match and synchronization occurs and if <span>$b=4.4$</span>, then the parameters mismatch and synchronization does not occur. The result of <code>decrypt_secret_message</code> is <span>$E(t) = (x_T - x_R)^2$</span> which is the difference between the x-component of the transmitter&#39;s solution and the x-component of the receiver&#39;s solution squared. If the error is close to zero, then the binary digit must be <span>$0$</span> and otherwise, the binary digit is <span>$1$</span>. </p><p>In the plot below, the regions in red correspond to the binary digit <span>$1$</span> and the regions in blue correspond to the binary digit <span>$0$</span>. </p><pre><code class="language-julia hljs"># result is the difference between the x_T and x_R squared
+error = decrypt_secret_message(
     u0,
     p,
     tspan,
@@ -43,7 +44,8 @@ error_squared = decrypt_secret_message(
     binary = true
 )
 
-p = plot(error_squared, tspan..., xticks = 0:2:12, xaxis=L&quot;t&quot;, yaxis=&quot;Error squared&quot;,linecolor=&quot;black&quot;, left_margin=10mm, bottom_margin=10mm)
+# Plot the error
+p = plot(error, tspan..., xticks = 0:2:12, xaxis=L&quot;t&quot;, yaxis=&quot;Error&quot;,linecolor=&quot;black&quot;, left_margin=10mm, bottom_margin=10mm)
 
 for i in [0, 4, 8]
     vspan!(p, [i, i + 2], linecolor = :red, fillcolor = :red, fillalpha = 0.2, legend = false)
@@ -51,4 +53,4 @@ end
 for i in [2, 6, 10]
     vspan!(p, [i, i + 2], linecolor = :blue, fillcolor = :blue, fillalpha = 0.2, legend = false)
 end
-current() # update plot</code></pre><img src="5700cca4.svg" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../sending_a_message/">« Sending a secret message</a><a class="docs-footer-nextpage" href="../documentation/">Documentation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Thursday 26 October 2023 20:49">Thursday 26 October 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+current() # update plot</code></pre><img src="11621a6e.svg" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../sending_a_message/">« Sending a secret message</a><a class="docs-footer-nextpage" href="../documentation/">Documentation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Friday 27 October 2023 05:58">Friday 27 October 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
