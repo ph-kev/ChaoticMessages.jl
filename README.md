@@ -1,7 +1,14 @@
 # ChaoticMessages.jl
 
 ## Introduction
-The package `ChaoticMessages.jl` simulates synchronized chaotic dynamical systems using DifferentialEquations.jl to illustrate how secret messages can be sent using chaos. In particular, the secret messages are embedded into the trajectory of the chaotic dynamical system and synchronization is used to reproduce the secret messages. Binary messages can be sent secretly using parameter modulation. This package is largely based off of the work done in "Circuit implementation of synchronized chaos with applications to communications" by Kevin Cuomo and Alan Oppenheim. 
+The package `ChaoticMessages.jl` simulates synchronized chaotic dynamical systems using `DifferentialEquations.jl` to illustrate how secret messages can be sent using chaos. In particular, the secret messages are embedded into the trajectory of the chaotic dynamical system and synchronization is used to reproduce the secret messages. This package is largely based off of the work done in "Circuit implementation of synchronized chaos with applications to communications" by Kevin Cuomo and Alan Oppenheim. 
+
+## Installation 
+```julia 
+julia> ]
+
+(@v1.8) pkg> add https://github.com/ph-kev/ChaoticMessages.jl
+```
 
 ## Documentation
 Documentation can be found at [https://ph-kev.github.io/ChaoticMessages.jl/](https://ph-kev.github.io/ChaoticMessages.jl/).
