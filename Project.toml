@@ -1,7 +1,7 @@
 name = "ChaoticMessages"
 uuid = "aa478434-e6c4-48af-b61f-423d2e2da8e3"
 authors = ["ph-kev"]
-version = "1.0.0-DEV"
+version = "1.0.0"
 
 [deps]
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
