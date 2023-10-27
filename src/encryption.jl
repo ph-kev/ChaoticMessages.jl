@@ -36,7 +36,7 @@ The system of differential equations is -
 ``\\dot{z_T} = 5x_T y_T - b(t) z_T.``
 
 Notice that the only difference between `lorenz_transmitter!` and 
-`lorenz_transmitter_binary!` is that `b` can be a function of time. 
+`lorenz_transmitter_binary!` is that `b` is a function of time. 
 """
 function lorenz_transmitter_binary!(du, u, p, t)
     x_T, y_T, z_T = u

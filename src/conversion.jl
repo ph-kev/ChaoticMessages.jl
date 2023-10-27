@@ -68,7 +68,7 @@ end
 - `num_of_samples::Int64` : number of samples of the resulting file 
 - `name_of_file::String` : name of the resulting file 
 
-Convert samples into a wav file. 
+Convert samples into a wav file and save it. 
 """
 function convert_samples_to_message(
     samples,
@@ -117,7 +117,7 @@ function binary_to_bmessage(
     binary_arr = [parse.(Float64, string(c)) for c in s]
 
     # Iterate through binary_arr and replace them with b_zero if the digit is 0 and b_one
-    # othewise 
+    # otherwise 
     for (idx, num) in enumerate(binary_arr)
         if num == 0
             binary_arr[idx] = b_zero
