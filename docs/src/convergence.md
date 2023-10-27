@@ -63,7 +63,7 @@ sol_receiver = solve(prob_R, AutoTsit5(Rodas4P()), abstol = 1e-11, reltol = 1e-1
 receiver_plot = plot(sol_receiver, idxs = (0, 1), legend = false, xaxis=L"t", yaxis="Receiver", linecolor="black", left_margin=10mm, bottom_margin=10mm)
 ```
 
-Lastly, we plot the absolute error between the $x$-component of the receiver's dynamical system and the transmitter's dynamical system. We see that the error converge to zero which means the pair of dynamical system synchronize for the $x$-component despite starting at different initial conditions. Also, it has been shown that the error converge to zero in $O(t^2)$ time. The idea behind sending secret messages using chaotic dynamical systems is to encode a message in $x_T$ and having the receiver's dynamical system reproduce the message by its synchronization! 
+Lastly, we plot the absolute error between the $x$-component of the receiver's dynamical system and the transmitter's dynamical system. We see that the error converge to zero which means the pair of dynamical system synchronize for the $x$-component despite starting at different initial conditions. Also, it has been shown that the error converge to zero exponentially in time. The idea behind sending secret messages using chaotic dynamical systems is to encode a message in $x_T$ and having the receiver's dynamical system reproduce the message by its synchronization! 
 
 ```@example convergence
 # Get only the x-component of the solution 
