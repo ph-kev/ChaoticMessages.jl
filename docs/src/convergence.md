@@ -20,9 +20,9 @@ which is the transmitter's dynamical system and
 \end{align*}
 ```
 
-These pair of systems can be used to send secret messages. 
+which is the receiver's dynamical system. These pair of systems can be used to send secret messages. 
 
-We give a numerical example of synchronization and the error between the transmitter's dynamical system and the receiver's dynamical system going to zero for the x-component.
+We give a numerical example of synchronization and the error between the $x$-component of the transmitter's dynamical system and the $x$-component of the receiver's dynamical system going to zero.
 
 We first find the solution to the transmitter's dynamical system with parameters ``\sigma = 16``, ``r=45.6``, and $b=4$ with initial condition ``[16.0, 4.0, 45.6]``. 
 
@@ -45,31 +45,31 @@ sol_transmitter = solve(prob_T, AutoTsit5(Rodas4P()), abstol = 1e-11, reltol = 1
 transmitter_plot = plot(sol_transmitter, idxs = (0, 1), legend = false, xaxis=L"t", yaxis="Transmitter",linecolor="black", left_margin=10mm, bottom_margin=10mm)
 ```
 
-Next, we find the solution to the receiver's dynamical system with the same parameters ``\sigma = 16``, ``r=45.6``, and ``b=4`` as before, but with different initial condition ``[10.2,7.3,6.0]``. Also, notice that in the definition of the receiver's system, we are using ``x_T`` which is the $x$-coordinate of the transmitter's dynamical system. Hence, the receiver's dynamical system have some information about the transmitter's dynamical system. 
+Next, we find the solution to the receiver's dynamical system with the same parameters ``\sigma = 16``, ``r=45.6``, and ``b=4`` as before, but with different initial condition ``[10.2,7.3,6.0]``. Also, notice that in the definition of the receiver's system, we are using ``x_T`` which is the $x$-component of the transmitter's dynamical system. Hence, the receiver's dynamical system have information of the $x$-component of the solution to the transmitter's dynamical system.
 
 ```@example convergence
-# Get only the x-coordinates of the solution 
+# Get only the x-component of the solution 
 x_at_time_t_transmitter(t) = sol_transmitter(t,idxs=1) 
 
 u0 = [10.2,7.3,6.0] # Different intial conditions 
 
 receiver! = lorenz_receiver!(x_at_time_t_transmitter)
 
-# Set up the ODE problem (for parameterized_lorenz_receiver!) and solve it 
-prob_R = ODEProblem(receiver!,u0,tspan,p) # reusing the same parameters 
+# Set up the ODE problem (for lorenz_receiver!) and solve it 
+prob_R = ODEProblem(receiver!, u0, tspan, p) # reusing the same parameters 
 sol_receiver = solve(prob_R, AutoTsit5(Rodas4P()), abstol = 1e-11, reltol = 1e-11)
 
 # Plot only the x-component of the solution for receiver's dynamical system 
 receiver_plot = plot(sol_receiver, idxs = (0, 1), legend = false, xaxis=L"t", yaxis="Receiver", linecolor="black", left_margin=10mm, bottom_margin=10mm)
 ```
 
-Lastly, we plot the absolute error between the $x$-component of the receiver's dynamical system and the transmitter's dynamical system. We see that the error converge to zero which means the pair of dynamical system synchronize despite starting at different initial conditions. Also, it has been shown that the error converge to zero in $O(t^2)$ time. The idea behind sending secret messages using chaotic dynamical systems is to encode a message in $x_T$ and having the receiver's dynamical system reproduce the message by its synchronization! 
+Lastly, we plot the absolute error between the $x$-component of the receiver's dynamical system and the transmitter's dynamical system. We see that the error converge to zero which means the pair of dynamical system synchronize for the $x$-component despite starting at different initial conditions. Also, it has been shown that the error converge to zero in $O(t^2)$ time. The idea behind sending secret messages using chaotic dynamical systems is to encode a message in $x_T$ and having the receiver's dynamical system reproduce the message by its synchronization! 
 
 ```@example convergence
-# Get only the x-coordinates of the solution 
+# Get only the x-component of the solution 
 x_at_time_t_receiver(t) = sol_receiver(t,idxs=1) 
 
-# Plot the errors and the x-coordinates of the solutions 
+# Plot the errors and the x-component of the solutions 
 abs_error = error_set_up(x_at_time_t_transmitter, x_at_time_t_receiver)
 
 error_plot = plot(abs_error, tspan..., legend = false, xaxis=L"t", yaxis=L"E(t)",linecolor="red")

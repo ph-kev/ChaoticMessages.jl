@@ -1,8 +1,8 @@
 # Sending a secret message using chaotic dynamical systems 
 
-Consider two people: Transmitter and Receiver. Transmitter want to send a message $m(t)$ to Receiver. However, the message should not be able to be read by anyone, but the Receiver. Cuomo and Oppenheim show that one way of approaching this problem is by using synchronized chaotic system [1]. The core idea is to send the sum of the message $m(t)$ and the trajectory of the transmitter's dynamical system, use the receiver's dynamical system to reproduce the actual trajectory of the transmitter's dynamical system, and use this to directly compute $m(t)$.
+For this tutorial, we will learn how messages can be sent secretly using a chaotic dynamical system. Consider two people: Transmitter and Receiver. Transmitter want to send a message $m(t)$ to Receiver. However, the message should not be able to be read by anyone, but the Receiver. Cuomo and Oppenheim show that one way of approaching this problem is by using synchronized chaotic system [1]. The core idea is to send the sum of the message $m(t)$ and the trajectory of the transmitter's dynamical system, use the receiver's dynamical system to reproduce the actual trajectory of the transmitter's dynamical system, and use this to directly compute $m(t)$.
 
-In the cell below, we encoded a secret message which is audio of a taunt from Monty Python into the x-component of the trajectory of the transmitter's dynamical system which is 
+In the cell below, we encoded a secret message which is audio of a taunt from Monty Python into the $x$-component of the trajectory of the transmitter's dynamical system which is 
 
 ```math
 \begin{align*}
@@ -36,7 +36,7 @@ plot(time_arr, unscaled_secret_message, xaxis=L"t", yaxis=L"x(t)", label = "Secr
 plot!(time_arr, no_message, label = "No message embedded", color = "darkorange")
 ```
 
-The first step is to create an encrypted message $\widetilde{m}(t) = x_T (t) + m(t)$ where the magnitude of $m(t)$ is much smaller than the magnitude of $x_T(t)$. This encrypts the message $m(t)$ because $x_T(t)$ serve as a mask to hide the message $m(t)$. Note that $m(t)$ can be made as small as we like by multiplying by $0 < \varepsilon < 1$. The receiver can multiply by $\frac{1}{\varepsilon}$ to get $m(t)$ back when the receiver recovers the scaled version of $m(t)$. The variable $\varepsilon$ is the keyword argument `scale` in `create_secret_message`. 
+The first step is to create an encrypted message $\widetilde{m}(t) = x_T (t) + m(t)$ where the magnitude of $m(t)$ is much smaller than the magnitude of $x_T(t)$. This encrypts the message $m(t)$ because $x_T(t)$ serve as a mask to hide the message $m(t)$. Note that $m(t)$ can be made as small as we like by multiplying by $0 < \varepsilon < 1$. The receiver can multiply by $\frac{1}{\varepsilon}$ to get $m(t)$ back when the receiver recovers the scaled version of $m(t)$. The value of $\varepsilon$ is determined the keyword argument `scale = 1e-5` in `create_secret_message`. 
 
 ```@example sending
 ### Transmitter ###
@@ -48,17 +48,17 @@ secret_message = create_secret_message(u0, p, tspan, unencrypted_message)
 convert_samples_to_message(secret_message, sampling_rate, num_samples, "../audio/tauntSecret.wav")
 ```
 
-The second step is to send the encrypted message $\widetilde{m}(t)$ which is a .wav file to the receiver and the third step is to use $\widetilde{m}(t)$ to reproduce $x_T(t)$. Note that in this case, $m(t)$ is noise as the receiver's dynamical system try to synchronize with $\widetilde{m}(t)$. The receiver's dynamical system is 
+The second step is to send the encrypted message $\widetilde{m}(t)$ which is a .wav file to the receiver and the third step is to use $\widetilde{m}(t)$ to reproduce $x_T(t)$. Note that in this case, the message $m(t)$ is noise as the receiver's dynamical system try to synchronize with $\widetilde{m}(t)$. The receiver's dynamical system will not perfectly recover $x_T(t)$ because of the noise $m(t)$. The error will also not go to zero because of this. The receiver's dynamical system is 
 
 ```math
 \begin{align*}
 \dot{x_R} &= \sigma (y_R-x_R), \\
-\dot{y_R} &= r  \widetilde{m} - y_R - 20 (\widetilde{m}   z_R),\\
-\dot{z_R} &= 5 \widetilde{m} y_R - b  z_R,
+\dot{y_R} &= r  \widetilde{m}(t) - y_R - 20 (\widetilde{m}(t)   z_R),\\
+\dot{z_R} &= 5 \widetilde{m}(t) y_R - b  z_R,
 \end{align*}
 ```
 
-where $x_R$ is replaced by $\widetilde{m}$ except for the equation for $\dot{x_R}$. Also, notice that the receiver's dynamical system will not perfectly recover $x_T(t)$ because of the noise $m(t)$. We compute $\widetilde{m}(t) - x_R(t) \approx x_T (t) + m(t) - x_T(t) = m(t)$ which give us the recovered message! 
+where $x_R$ is replaced by $\widetilde{m}$ except for the equation for $\dot{x_R}$. Since $\widetilde{m}(t) = x_T(t) + m(t)$ and $x_T(t) \approx x_R(t)$, we compute $\widetilde{m}(t) - x_R(t) \approx x_T (t) + m(t) - x_T(t) = m(t)$ which give us the recovered message! 
 
 ```@example sending
 ### Receiver ###
@@ -72,7 +72,7 @@ decrypted_message = decrypt_secret_message(u0, p, tspan, secret_message)
 convert_samples_to_message(decrypted_message, sampling_rate, num_samples, "../audio/tauntDecrpyted.wav")
 ```
 
-To examine its effectiveness, we look at the error between `unencrypted_message` and `decrypted_message` and see that the error fluctuates at around $0.1$ which is enough to listen to the message faithfully. 
+To examine its effectiveness, we look at the error between `unencrypted_message` and `decrypted_message` and see that the error fluctuates at around $0.01$ which is enough to listen to the message faithfully. 
 
 ```@example sending
 # Plot error between original sound file and decrypted sound file 
@@ -87,7 +87,7 @@ combined_plot = plot(sound_plot, error_plot, dpi = 900)
 combined_plot
 ```
 
-Noise can be added to the message to test whether this form of encryption is robust to noise or not. We tested it for $\sigma = 0.1, 0.5, 1.0, 2.0$. The message is still recovered, but is masked with static noise. For a large $\sigma$, the message cannot be heard because of the static noise. Hence, this is not robust to noise. 
+Noise can be added to the message to test whether this form of encryption is robust to noise or not. We tested it for $\sigma = 0.1, 0.5, 1.0, 2.0$. The message is still recovered, but is masked with static noise. For a large $\sigma$, the message cannot be heard because of the static noise. 
 
 ```@example sending
 Random.seed!(42424242) # set seed 

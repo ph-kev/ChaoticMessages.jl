@@ -10,7 +10,7 @@ using LaTeXStrings
 using Measures
 ```
 
-We first encode a binary string into a function of time. If the binary digit is $0$, then the result is `b_zero = 4.0` and if the binary digit is $1$, then the result is `b_one = 4.4`. Each digit is spaced by a time interval of $t=2$. Anything else that do not correspond to any of the position of the binary string is mapped to the value of `b_zero`. 
+We first encode a binary string as a function of time. If the binary digit is $0$, then the result is `b_zero = 4.0` and if the binary digit is $1$, then the result is `b_one = 4.4`. Each digit is spaced by a time interval of $t=2.0$. Anything else that do not correspond to any of the position of the binary string is mapped to the value of `b_zero`. 
 
 ```@example binary
 message_unencrypted = binary_to_bmessage("101010"; )
@@ -28,7 +28,7 @@ We now use this in the transmitter's chaotic system which is given by
 \begin{align*}
 \dot{x_T} &= \sigma (y_T - x_T), \\ 
 \dot{y_T} &= rx_T - y_T - 20 x_T z_T, \\ 
-\dot{z_T} &= 5 x_T y_T - b(t)z_T,
+\dot{z_T} &= 5 x_T y_T - b(t)z_T.
 \end{align*}
 ```
 
@@ -49,6 +49,7 @@ secret_message = create_secret_message(
     binary = true,
 )
 
+# Plot x-component of the solution to the transmitter's dynamical system 
 plot(secret_message, tspan..., xticks = 0:2:12, legend = false, xaxis=L"t", yaxis="Transmitter",linecolor="black", left_margin=10mm, bottom_margin=10mm)
 ```
 
@@ -58,15 +59,17 @@ To decrypt the secret message, we use the receiver's dynamical system which is
 \begin{align*}
 \dot{x_R} &= \sigma (y_R - x_R), \\ 
 \dot{y_R} &= rx_T - y_R - 20 x_T z_R, \\ 
-\dot{z_R} &= 5 x_T y_R - bz_R,
+\dot{z_R} &= 5 x_T y_R - bz_R.
 \end{align*}
 ```
 
-If $b=4.0$, then synchronization occurs and if $b=4.4$, then synchronization does not occur. The result of `decrypt_secret_message` is the error squared between the x-component of the transmitter's solution and the x-component of the receiver's solution. If the error is close to zero, then the binary digit must be $0$ and otherwise, the binary digit is $1$. 
+If $b=4.0$, then the parameters match and synchronization occurs and if $b=4.4$, then the parameters mismatch and synchronization does not occur. The result of `decrypt_secret_message` is $E(t) = (x_T - x_R)^2$ which is the difference between the x-component of the transmitter's solution and the x-component of the receiver's solution squared. If the error is close to zero, then the binary digit must be $0$ and otherwise, the binary digit is $1$. 
+
+In the plot below, the regions in red correspond to the binary digit $1$ and the regions in blue correspond to the binary digit $0$. 
 
 ```@example binary
 # result is the difference between the x_T and x_R squared
-error_squared = decrypt_secret_message(
+error = decrypt_secret_message(
     u0,
     p,
     tspan,
@@ -74,7 +77,8 @@ error_squared = decrypt_secret_message(
     binary = true
 )
 
-p = plot(error_squared, tspan..., xticks = 0:2:12, xaxis=L"t", yaxis="Error squared",linecolor="black", left_margin=10mm, bottom_margin=10mm)
+# Plot the error 
+p = plot(error, tspan..., xticks = 0:2:12, xaxis=L"t", yaxis="Error",linecolor="black", left_margin=10mm, bottom_margin=10mm)
 
 for i in [0, 4, 8]
     vspan!(p, [i, i + 2], linecolor = :red, fillcolor = :red, fillalpha = 0.2, legend = false)

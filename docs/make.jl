@@ -10,6 +10,6 @@ pages = [
 ]
 )
 
-deploydocs(
-    repo = "github.com/ph-kev/ChaoticMessages.jl.git",
-)
+# deploydocs(
+#     repo = "github.com/ph-kev/ChaoticMessages.jl.git",
+# )
